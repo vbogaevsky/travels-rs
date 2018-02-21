@@ -6,7 +6,6 @@ table! {
         country -> Nullable<Varchar>,
         city -> Nullable<Varchar>,
         distance -> Nullable<Int8>,
-        created_at -> Nullable<Timestamp>,
     }
 }
 
@@ -18,8 +17,7 @@ table! {
         first_name -> Nullable<Varchar>,
         last_name -> Nullable<Varchar>,
         gender -> Nullable<Bpchar>,
-        birth_date -> Nullable<Timestamp>,
-        created_at -> Nullable<Timestamp>,
+        birth_date -> Nullable<Int8>,
     }
 }
 
@@ -29,9 +27,8 @@ table! {
         id -> Nullable<Int8>,
         location -> Nullable<Int8>,
         user -> Nullable<Int8>,
-        visited_at -> Nullable<Timestamp>,
+        visited_at -> Nullable<Int8>,
         mark -> Nullable<Int2>,
-        created_at -> Nullable<Timestamp>,
     }
 }
 

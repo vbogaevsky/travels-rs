@@ -1,21 +1,63 @@
-extern crate iron;
-extern crate router;
-extern crate rustc_serialize;
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
 
-use iron::prelude::*;
-use iron::status;
-use iron::mime::Mime;
-use router::Router;
-use std::io::Read;
-use rustc_serialize::json;
+extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
+#[macro_use]
+extern crate serde_derive;
+#[macro_use]
+extern crate diesel;
+extern crate r2d2_diesel;
+extern crate r2d2;
 
 mod lib;
 
-fn main() {
-    Iron::new(|r: &mut Request| {
-        println!("{:?}", r);
-        let content_type = "application/json".parse::<Mime>().unwrap();
+use rocket_contrib::{Json, Value};
+use lib::init_pool;
+use lib::db_conn::DbConn;
+use lib::models::{User, NewUser};
+use lib::schema::users::dsl::*;
+use diesel::query_dsl::*;
+// Visit, NewVisit, Location, NewLocation
 
-        Ok(Response::with((content_type, status::Ok, "")))
-    }).http("localhost:7777").unwrap();
+#[get("/<req_id>", format = "application/json")]
+fn show_user(conn: DbConn, req_id: i64) -> Json<User> {
+    users.filter(id.eq(req_id))
+         .limit(1)
+         .load::<User>(&*conn)
+         .expect("Error loading users")
+}
+
+// #[post("/", format = "application/json", data = "<params>")]
+// fn create_user(params: Json<NewUser>) -> Json<Value> {
+//
+// }
+
+// #[get("/<id>", format = "application/json")]
+// fn show_location(id: i64) -> String {
+//     format!("Location #{}", id)
+// }
+//
+// #[get("/<id>", format = "application/json")]
+// fn show_visits(id: i64) -> String {
+//     format!("Visit #{}", id)
+// }
+
+#[error(404)]
+fn not_found() -> Json<Value> {
+    Json(json!({
+        "status": "error",
+        "reason": "Resource was not found."
+    }))
+}
+
+fn main() {
+    rocket::ignite()
+        .manage(init_pool())
+        .mount("/users", routes![show_user])
+        // .mount("/users", routes![create_user])
+        // .mount("/locations", routes![show_location])
+        // .mount("/visits", routes![show_visits])
+        .launch();
 }
