@@ -1,9 +1,9 @@
 CREATE TABLE users (
   internal   SERIAL PRIMARY KEY,
-  id         BIGINT,
-  email      VARCHAR(100),
-  first_name VARCHAR(50),
-  last_name  VARCHAR(50),
-  gender     CHAR,
-  birth_date BIGINT
+  id         BIGINT NOT NULL,
+  email      VARCHAR(100) NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name  VARCHAR(50) NOT NULL,
+  gender     VARCHAR(1) NOT NULL,
+  birth_date BIGINT NOT NULL
 );

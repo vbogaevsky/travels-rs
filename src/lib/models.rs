@@ -6,8 +6,8 @@ pub struct User {
     pub email:          String,
     pub first_name:     String,
     pub last_name:      String,
-    pub gender:         char,
-    pub birth_date:     i32
+    pub gender:         String,
+    pub birth_date:     i64
 }
 
 #[derive(Deserialize, Insertable)]

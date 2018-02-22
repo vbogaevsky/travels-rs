@@ -16,17 +16,19 @@ mod lib;
 use rocket_contrib::{Json, Value};
 use lib::init_pool;
 use lib::db_conn::DbConn;
-use lib::models::{User, NewUser};
+use lib::models::{User};
 use lib::schema::users::dsl::*;
 use diesel::query_dsl::*;
-// Visit, NewVisit, Location, NewLocation
+use diesel::ExpressionMethods;
+// NewUser, Visit, NewVisit, Location, NewLocation
 
 #[get("/<req_id>", format = "application/json")]
 fn show_user(conn: DbConn, req_id: i64) -> Json<User> {
-    users.filter(id.eq(req_id))
+    let user = users.filter(id.eq(req_id))
          .limit(1)
          .load::<User>(&*conn)
-         .expect("Error loading users")
+         .expect("Error loading users");
+    Json(user.get(0))
 }
 
 // #[post("/", format = "application/json", data = "<params>")]

@@ -12,12 +12,12 @@ table! {
 table! {
     users (internal) {
         internal -> Int4,
-        id -> Nullable<Int8>,
-        email -> Nullable<Varchar>,
-        first_name -> Nullable<Varchar>,
-        last_name -> Nullable<Varchar>,
-        gender -> Nullable<Bpchar>,
-        birth_date -> Nullable<Int8>,
+        id -> Int8,
+        email -> Varchar,
+        first_name -> Varchar,
+        last_name -> Varchar,
+        gender -> Varchar,
+        birth_date -> Int8,
     }
 }
 
