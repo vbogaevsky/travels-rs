@@ -14,21 +14,20 @@ extern crate r2d2;
 mod lib;
 
 use rocket_contrib::{Json, Value};
+use rocket::response::status;
 use lib::init_pool;
 use lib::db_conn::DbConn;
 use lib::models::{User};
-use lib::schema::users::dsl::*;
-use diesel::query_dsl::*;
-use diesel::ExpressionMethods;
 // NewUser, Visit, NewVisit, Location, NewLocation
 
 #[get("/<req_id>", format = "application/json")]
-fn show_user(conn: DbConn, req_id: i64) -> Json<User> {
-    let user = users.filter(id.eq(req_id))
-         .limit(1)
-         .load::<User>(&*conn)
-         .expect("Error loading users");
-    Json(user.get(0))
+fn show_user(conn: DbConn, req_id: i64) -> Json<Option<User>> {
+    use lib::schema::users::dsl::*;
+    let result = users.filter(id.eq(req_id))
+                      .limit(1)
+                      .load::<User>(&*conn)
+                      .expect("Error loading users");
+    result.map(|user| Json(user))
 }
 
 // #[post("/", format = "application/json", data = "<params>")]
