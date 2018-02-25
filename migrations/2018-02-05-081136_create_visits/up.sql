@@ -1,6 +1,5 @@
 CREATE TABLE visits (
-  internal   SERIAL PRIMARY KEY,
-  id         BIGINT,
+  id         BIGINT PRIMARY KEY,
   location   BIGINT,
   "user"     BIGINT,
   visited_at BIGINT,

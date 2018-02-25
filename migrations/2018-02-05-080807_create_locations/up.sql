@@ -1,6 +1,5 @@
 CREATE TABLE locations(
-  internal   SERIAL PRIMARY KEY,
-  id         BIGINT,
+  id         BIGINT PRIMARY KEY,
   place      TEXT,
   country    VARCHAR(50),
   city       VARCHAR(50),

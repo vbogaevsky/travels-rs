@@ -1,7 +1,6 @@
 table! {
-    locations (internal) {
-        internal -> Int4,
-        id -> Nullable<Int8>,
+    locations (id) {
+        id -> Int8,
         place -> Nullable<Text>,
         country -> Nullable<Varchar>,
         city -> Nullable<Varchar>,
@@ -10,8 +9,7 @@ table! {
 }
 
 table! {
-    users (internal) {
-        internal -> Int4,
+    users (id) {
         id -> Int8,
         email -> Varchar,
         first_name -> Varchar,
@@ -22,9 +20,8 @@ table! {
 }
 
 table! {
-    visits (internal) {
-        internal -> Int4,
-        id -> Nullable<Int8>,
+    visits (id) {
+        id -> Int8,
         location -> Nullable<Int8>,
         user -> Nullable<Int8>,
         visited_at -> Nullable<Int8>,
