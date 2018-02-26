@@ -21,11 +21,10 @@ use diesel::prelude::*;
 
 #[get("/<id>", format = "application/json")]
 fn show_user(conn: DbConn, id: i64) -> Result<Json<User>, diesel::result::Error> {
-    use lib::schema::users::dsl;
-    let result = users.find(id).first::<User>(conn);
-    match result.first().ok_or(diesel::result::Error::NotFound) {
-        Ok(user) => Ok(Json(*user)),
-        Err(e)     => Err(e)
+    let result = lib::schema::users::table.find(id).first::<User>(&*conn);
+    match result {
+        Ok(user) => Ok(Json(user)),
+        Err(e)   => Err(e)
     }
 }
 
@@ -34,15 +33,23 @@ fn show_user(conn: DbConn, id: i64) -> Result<Json<User>, diesel::result::Error>
 //
 // }
 
-// #[get("/<id>", format = "application/json")]
-// fn show_location(id: i64) -> String {
-//     format!("Location #{}", id)
-// }
-//
-// #[get("/<id>", format = "application/json")]
-// fn show_visits(id: i64) -> String {
-//     format!("Visit #{}", id)
-// }
+#[get("/<id>", format = "application/json")]
+fn show_location(conn: DbConn, id: i64) -> Result<Json<Location>, diesel::result::Error> {
+    let result = lib::schema::locations::table.find(id).first::<Location>(&*conn);
+    match result {
+        Ok(location) => Ok(Json(location)),
+        Err(e)       => Err(e)
+    }
+}
+
+#[get("/<id>", format = "application/json")]
+fn show_visits(conn: DbConn, id: i64) -> Result<Json<Visit>, diesel::result::Error> {
+    let result = lib::schema::visits::table.find(id).first::<Visit>(&*conn);
+    match result {
+        Ok(visit) => Ok(Json(visit)),
+        Err(e)    => Err(e)
+    }
+}
 
 #[error(404)]
 fn not_found() -> Json<Value> {
@@ -57,7 +64,7 @@ fn main() {
         .manage(init_pool())
         .mount("/users", routes![show_user])
         // .mount("/users", routes![create_user])
-        // .mount("/locations", routes![show_location])
-        // .mount("/visits", routes![show_visits])
+        .mount("/locations", routes![show_location])
+        .mount("/visits", routes![show_visits])
         .launch();
 }

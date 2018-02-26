@@ -1,10 +1,10 @@
 table! {
     locations (id) {
         id -> Int8,
-        place -> Nullable<Text>,
-        country -> Nullable<Varchar>,
-        city -> Nullable<Varchar>,
-        distance -> Nullable<Int8>,
+        place -> Text,
+        country -> Varchar,
+        city -> Varchar,
+        distance -> Int8,
     }
 }
 
@@ -22,10 +22,10 @@ table! {
 table! {
     visits (id) {
         id -> Int8,
-        location -> Nullable<Int8>,
-        user -> Nullable<Int8>,
-        visited_at -> Nullable<Int8>,
-        mark -> Nullable<Int2>,
+        location -> Int8,
+        user -> Int8,
+        visited_at -> Int8,
+        mark -> Int2,
     }
 }
 

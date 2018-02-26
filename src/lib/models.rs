@@ -1,7 +1,6 @@
 use super::schema::{users, locations, visits};
 #[derive(Serialize, Queryable)]
 pub struct User {
-    pub internal:       i32,
     pub id:             i64,
     pub email:          String,
     pub first_name:     String,
@@ -23,7 +22,6 @@ pub struct NewUser<'t> {
 
 #[derive(Queryable, Serialize)]
 pub struct Location {
-    pub internal:       i32,
     pub id:             i64,
     pub place:          String,
     pub country:        String,
@@ -43,11 +41,10 @@ pub struct NewLocation<'t> {
 
 #[derive(Queryable, Serialize)]
 pub struct Visit {
-    pub internal:       i32,
     pub id:             i64,
     pub location:       i64,
     pub user:           i64,
-    pub visited_at:     i32,
+    pub visited_at:     i64,
     pub mark:           i16
 }
 

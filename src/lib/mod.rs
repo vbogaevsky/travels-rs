@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 extern crate r2d2;
 #[cfg(not(release))]
 extern crate dotenv;
