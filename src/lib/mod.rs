@@ -11,6 +11,7 @@ use r2d2_diesel::ConnectionManager;
 pub mod schema;
 pub mod models;
 pub mod db_conn;
+pub mod error;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 

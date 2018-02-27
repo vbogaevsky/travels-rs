@@ -16,16 +16,14 @@ mod lib;
 use rocket_contrib::{Json, Value};
 use lib::init_pool;
 use lib::db_conn::DbConn;
+use lib::error::Error as ApiError;
 use lib::models::*;
 use diesel::prelude::*;
 
 #[get("/<id>", format = "application/json")]
-fn show_user(conn: DbConn, id: i64) -> Result<Json<User>, diesel::result::Error> {
-    let result = lib::schema::users::table.find(id).first::<User>(&*conn);
-    match result {
-        Ok(user) => Ok(Json(user)),
-        Err(e)   => Err(e)
-    }
+fn show_user(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
+    let user = lib::schema::users::table.find(id).first::<User>(&*conn)?;
+    Ok(Json(user))
 }
 
 // #[post("/", format = "application/json", data = "<params>")]
@@ -34,21 +32,15 @@ fn show_user(conn: DbConn, id: i64) -> Result<Json<User>, diesel::result::Error>
 // }
 
 #[get("/<id>", format = "application/json")]
-fn show_location(conn: DbConn, id: i64) -> Result<Json<Location>, diesel::result::Error> {
-    let result = lib::schema::locations::table.find(id).first::<Location>(&*conn);
-    match result {
-        Ok(location) => Ok(Json(location)),
-        Err(e)       => Err(e)
-    }
+fn show_location(conn: DbConn, id: i64) -> Result<Json<Location>, ApiError> {
+    let location = lib::schema::locations::table.find(id).first::<Location>(&*conn)?;
+    Ok(Json(location))
 }
 
 #[get("/<id>", format = "application/json")]
-fn show_visits(conn: DbConn, id: i64) -> Result<Json<Visit>, diesel::result::Error> {
-    let result = lib::schema::visits::table.find(id).first::<Visit>(&*conn);
-    match result {
-        Ok(visit) => Ok(Json(visit)),
-        Err(e)    => Err(e)
-    }
+fn show_visits(conn: DbConn, id: i64) -> Result<Json<Visit>, ApiError> {
+    let visit = lib::schema::visits::table.find(id).first::<Visit>(&*conn)?;
+    Ok(Json(visit))
 }
 
 #[error(404)]
