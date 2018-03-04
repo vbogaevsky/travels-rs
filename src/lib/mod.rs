@@ -12,10 +12,10 @@ pub mod schema;
 pub mod models;
 pub mod db_conn;
 pub mod error;
+pub mod handlers;
 
 type Pool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
-// #[cfg(buid="production")]
 #[cfg(release)]
 static DATABASE_URL: &'static str = env!("DATABASE_URL");
 
