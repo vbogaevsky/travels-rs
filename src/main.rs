@@ -1,4 +1,5 @@
 #![feature(plugin)]
+#![feature(custom_derive)]
 #![plugin(rocket_codegen)]
 
 extern crate rocket;
@@ -25,13 +26,21 @@ fn not_found() -> Json<Value> {
 }
 
 fn main() {
-    rocket::ignite().manage(init_pool())
-                    .catch(errors![not_found])
-                    .mount("/users",     routes![lib::handlers::users::show])
-                    // .mount("/users", routes![create_user])
-                    .mount("/locations", routes![lib::handlers::locations::show])
-                    .mount("/visits",    routes![lib::handlers::visits::show])
-                    .launch();
+    rocket::ignite().manage(init_pool()).catch(errors![not_found])
+        .mount(
+            "/users",     routes![
+                lib::handlers::users::show,
+                lib::handlers::users::visits
+            ]
+        ).mount(
+            "/locations", routes![
+                lib::handlers::locations::show
+            ]
+        ).mount(
+            "/visits",    routes![
+                lib::handlers::visits::show
+            ]
+        ).launch();
 }
 
 
