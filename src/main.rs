@@ -17,6 +17,14 @@ mod lib;
 use rocket_contrib::{Json, Value};
 use lib::init_pool;
 
+#[error(400)]
+fn bad_request() -> Json<Value> {
+    Json(json!({
+        "status": "error",
+        "reason": "Bad request"
+    }))
+}
+
 #[error(404)]
 fn not_found() -> Json<Value> {
     Json(json!({
@@ -26,8 +34,12 @@ fn not_found() -> Json<Value> {
 }
 
 fn main() {
-    rocket::ignite().manage(init_pool()).catch(errors![not_found])
-        .mount(
+    rocket::ignite().manage(init_pool())
+        .catch(
+            errors![
+                bad_request, not_found
+            ]
+        ).mount(
             "/users",     routes![
                 lib::handlers::users::show,
                 lib::handlers::users::visits

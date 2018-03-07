@@ -44,7 +44,7 @@ fn visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<Vec<UserVis
     if let Some(toDistance) = params.toDistance {
         query = query.filter(locations::distance.lt(toDistance));
     }
-    let visits = query.load(&*conn)?;
+    let visits = query.order(visits::visited_at.asc()).load(&*conn)?;
     Ok(Json(visits))
 }
 
