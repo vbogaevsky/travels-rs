@@ -25,6 +25,14 @@ fn bad_request() -> Json<Value> {
     }))
 }
 
+#[error(422)]
+fn unprocessable_entity() -> Json<Value> {
+    Json(json!({
+        "status": "error",
+        "reason": "Some reason" // TODO: Add reason processing
+    }
+}
+
 #[error(404)]
 fn not_found() -> Json<Value> {
     Json(json!({
