@@ -27,8 +27,16 @@ struct UserVisits {
     mark:       i16
 }
 
+#[get("/<id>/visits", format = "application/json")]
+fn visits(conn: DbConn, id: i64) -> Result<Json<Vec<UserVisits>>, ApiError> {
+    let visits = users::table.inner_join(visits::table.inner_join(locations::table))
+        .select((locations::place, visits::visited_at, visits::mark))
+        .filter(users::id.eq(id)).order(visits::visited_at.asc()).load(&*conn)?;
+    Ok(Json(visits))
+}
+
 #[get("/<id>/visits?<params>", format = "application/json")]
-fn visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<Vec<UserVisits>>, ApiError> {
+fn queriable_visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<Vec<UserVisits>>, ApiError> {
     let mut query = users::table.inner_join(visits::table.inner_join(locations::table))
         .select((locations::place, visits::visited_at, visits::mark))
         .filter(users::id.eq(id)).into_boxed();

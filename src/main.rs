@@ -30,7 +30,7 @@ fn unprocessable_entity() -> Json<Value> {
     Json(json!({
         "status": "error",
         "reason": "Some reason" // TODO: Add reason processing
-    }
+    }))
 }
 
 #[error(404)]
@@ -50,7 +50,8 @@ fn main() {
         ).mount(
             "/users",     routes![
                 lib::handlers::users::show,
-                lib::handlers::users::visits
+                lib::handlers::users::visits,
+                lib::handlers::users::queriable_visits
             ]
         ).mount(
             "/locations", routes![
