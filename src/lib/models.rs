@@ -1,5 +1,5 @@
 use super::schema::{users, locations, visits};
-#[derive(Serialize, Queryable, Debug)]
+#[derive(Identifiable, Serialize, Queryable, Debug)]
 pub struct User {
     pub id:             i64,
     pub email:          String,
@@ -20,7 +20,7 @@ pub struct NewUser<'t> {
     pub birth_date:     i64
 }
 
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Identifiable, Queryable, Associations, Serialize, Debug)]
 pub struct Location {
     pub id:             i64,
     pub place:          String,
@@ -39,7 +39,8 @@ pub struct NewLocation<'t> {
     pub distance:       i64
 }
 
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Identifiable, Queryable, Associations, Serialize, Debug)]
+#[belongs_to(Location, foreign_key = "location")]
 pub struct Visit {
     pub id:             i64,
     pub location:       i64,

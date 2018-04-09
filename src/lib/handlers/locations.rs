@@ -2,7 +2,7 @@ use diesel::prelude::*;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
-use lib::models::{Location};
+use lib::models::{Location, Visit};
 use lib::schema::locations;
 
 #[derive(FromForm, Debug)]
@@ -30,13 +30,14 @@ fn avg(conn: DbConn, id: i64) -> Result<Json<AvgMark>, ApiError> {
     let location = locations::table.find(id).first::<Location>(&*conn)?;
     let visits = Visit::belonging_to(&location)
         .load::<Visit>(&*conn)?;
-    let sum: f64 = visits.map (|v| v.mark).iter()
-        .fold(0, |sum, mark| sum + mark);
-    let totalVisits: f64 = visits.count();
+    let sum: f64 = visits.iter().map (|v| v.mark)
+        .fold(0.0, |sum, mark| sum + mark as f64);
+    let totalVisits: f64 = visits.len() as f64;
     let avg = sum / totalVisits;
-    Ok(Json(avg))
+    Ok(Json(AvgMark{ avg: avg }))
 }
 
-#[get("/<id>/avg?<params>", format = "application/json")]
-fn queriable_avg(conn: DbConn, id: i64, params: AvgParams) -> Result<Json<AvgMark>, ApiError> {
-}
+//#[get("/<id>/avg?<params>", format = "application/json")]
+//fn queriable_avg(conn: DbConn, id: i64, params: AvgParams) -> Result<Json<AvgMark>, ApiError> {
+//}
+
