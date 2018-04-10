@@ -56,7 +56,8 @@ fn main() {
         ).mount(
             "/locations", routes![
                 lib::handlers::locations::show,
-                lib::handlers::locations::avg
+                lib::handlers::locations::avg,
+                lib::handlers::locations::queriable_avg
             ]
         ).mount(
             "/visits",    routes![
