@@ -56,17 +56,18 @@ fn queriable_avg(conn: DbConn, id: i64, params: AvgParams) -> Result<Json<AvgMar
         query = query.filter(users::birth_date.gt(current_time() - toAge));
     }
     if let Some(gender)   = params.gender   {
-        query = quert.filter(users::gender.eq(gender));
+        query = query.filter(users::gender.eq(gender));
     }
     let visits = query.load::<Visit>(&*conn)?;
     let sum: f64 = visits.iter().map(|v| v.mark)
         .fold(0.0, |sum, mark| sum + mark as f64);
     let totalVisits: f64 = visits.len() as f64;
     let avg = sum / totalVisits;
-    Ok(Json(AvgParams{ avg: avg }))
+    Ok(Json(AvgMark{ avg: avg }))
 }
 
 fn current_time() -> i64 {
-    SystemTime::now().duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
+    let duration_since = SystemTime::now().duration_since(UNIX_EPOCH)
+        .expect("Time went backwards");
+    duration_since.as_secs() as i64
 }
