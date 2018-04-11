@@ -40,8 +40,8 @@ fn avg(conn: DbConn, id: i64) -> Result<Json<AvgMark>, ApiError> {
 
 #[get("/<id>/avg?<params>", format = "application/json")]
 fn queriable_avg(conn: DbConn, id: i64, params: AvgParams) -> Result<Json<AvgMark>, ApiError> {
-    let location = locations::table.find(id).first::<Location>(&*conn)?;
-    let mut query = Visit::belonging_to(&location).inner_join(users::table)
+    let mut query = locations::table.inner_join(visits::table.inner_join(users::table))
+        .select(visits::mark).filter(locations::id.eq(id))
         .into_boxed();
     if let Some(fromDate) = params.fromDate {
         query = query.filter(visits::visited_at.gt(fromDate));
@@ -58,10 +58,9 @@ fn queriable_avg(conn: DbConn, id: i64, params: AvgParams) -> Result<Json<AvgMar
     if let Some(gender)   = params.gender   {
         query = query.filter(users::gender.eq(gender));
     }
-    let visits = query.load::<Visit>(&*conn)?;
-    let sum: f64 = visits.iter().map(|v| v.mark)
-        .fold(0.0, |sum, mark| sum + mark as f64);
-    let totalVisits: f64 = visits.len() as f64;
+    let marks: Vec<i16> = query.load(&*conn)?;
+    let sum: f64 = marks.iter().fold(0.0, |sum, &mark| sum + mark as f64);
+    let totalVisits: f64 = marks.len() as f64;
     let avg = sum / totalVisits;
     Ok(Json(AvgMark{ avg: avg }))
 }
