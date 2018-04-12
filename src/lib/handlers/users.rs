@@ -12,6 +12,23 @@ fn show(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
     Ok(Json(user))
 }
 
+#[derive(Deserialize, FromForm, Debug)]
+struct UpdateUser {
+    email:      Option<String>,
+    first_name: Option<String>,
+    last_name:  Option<String>,
+    gender:     Option<String>,
+    birth_date: Option<i64>
+}
+
+#[post("/<id>", format = "application/json")]
+fn show(conn: DbConn, id: i64, params: UpdateUser) -> Result<Json<Value>, ApiError> {
+   let mut query = diesel::update(user::table.filter(id));
+   if let Some(email) = params.email {
+    query = query 
+   }
+}
+
 #[derive(FromForm, Debug)]
 struct VisitParams {
     fromDate:   Option<i64>,
@@ -35,7 +52,6 @@ fn visits(conn: DbConn, id: i64) -> Result<Json<Vec<UserVisits>>, ApiError> {
     Ok(Json(visits))
 }
 
-#[get("/<id>/visits?<params>", format = "application/json")]
 fn queriable_visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<Vec<UserVisits>>, ApiError> {
     let mut query = users::table.inner_join(visits::table.inner_join(locations::table))
         .select((locations::place, visits::visited_at, visits::mark))
