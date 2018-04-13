@@ -12,21 +12,20 @@ fn show(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
     Ok(Json(user))
 }
 
-#[derive(Deserialize, FromForm, Debug)]
-struct UpdateUser {
-    email:      Option<String>,
-    first_name: Option<String>,
-    last_name:  Option<String>,
-    gender:     Option<String>,
-    birth_date: Option<i64>
+
+#[derive(FormFrom, Deserialze, AsChangeset)]
+#[table_name="users"]
+struct UserForm<'t> {
+    email:     Option<&'t str>,
+    first_name Option<&'t str>,
+    last_name  Option<&'t str>,
+    gender     Option<&'t str>,
+    birth_date Option<i64>
 }
 
-#[post("/<id>", format = "application/json")]
-fn show(conn: DbConn, id: i64, params: UpdateUser) -> Result<Json<Value>, ApiError> {
-   let mut query = diesel::update(user::table.filter(id));
-   if let Some(email) = params.email {
-    query = query 
-   }
+fn show(conn: DbConn, id: i64, params: UserForm) -> Result<Json<Value>, ApiError> {
+  diesel::update(users::table).set(&params).execute(&*conn);
+  Ok(Json())
 }
 
 #[derive(FromForm, Debug)]
