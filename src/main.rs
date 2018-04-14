@@ -50,6 +50,7 @@ fn main() {
         ).mount(
             "/users",     routes![
                 lib::handlers::users::show,
+                lib::handlers::users::update,
                 lib::handlers::users::visits,
                 lib::handlers::users::queriable_visits
             ]

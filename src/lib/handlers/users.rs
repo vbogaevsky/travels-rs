@@ -1,5 +1,7 @@
 use std::vec::Vec;
+use diesel;
 use diesel::prelude::*;
+use rocket::request::LenientForm;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
@@ -13,19 +15,21 @@ fn show(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
 }
 
 
-#[derive(FormFrom, Deserialze, AsChangeset)]
+#[derive(FromForm, AsChangeset, Debug)]
 #[table_name="users"]
-struct UserForm<'t> {
-    email:     Option<&'t str>,
-    first_name Option<&'t str>,
-    last_name  Option<&'t str>,
-    gender     Option<&'t str>,
-    birth_date Option<i64>
+struct UserForm {
+    email:      Option<String>,
+    first_name: Option<String>,
+    last_name:  Option<String>,
+    gender:     Option<String>,
+    birth_date: Option<i64>
 }
 
-fn show(conn: DbConn, id: i64, params: UserForm) -> Result<Json<Value>, ApiError> {
-  diesel::update(users::table).set(&params).execute(&*conn);
-  Ok(Json())
+#[post("/<id>", format = "application/json", data = "<params>")]
+fn update(conn: DbConn, id: i64, params: LenientForm<UserForm>) -> Result<Json<()>, ApiError> {
+    let update_data = params.get();
+    diesel::update(users::table.find(id)).set(update_data).execute(&*conn)?;
+    Ok(Json(()))
 }
 
 #[derive(FromForm, Debug)]
@@ -51,6 +55,7 @@ fn visits(conn: DbConn, id: i64) -> Result<Json<Vec<UserVisits>>, ApiError> {
     Ok(Json(visits))
 }
 
+#[get("/<id>/visits?<params>", format = "application/json")]
 fn queriable_visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<Vec<UserVisits>>, ApiError> {
     let mut query = users::table.inner_join(visits::table.inner_join(locations::table))
         .select((locations::place, visits::visited_at, visits::mark))
