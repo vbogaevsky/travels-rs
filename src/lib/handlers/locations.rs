@@ -1,5 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
+use diesel;
 use diesel::prelude::*;
+use rocket::request::LenientForm;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
@@ -24,6 +26,22 @@ struct AvgMark {
 fn show(conn: DbConn, id: i64) -> Result<Json<Location>, ApiError> {
     let location = locations::table.find(id).first::<Location>(&*conn)?;
     Ok(Json(location))
+}
+
+#[derive(FromForm, AsChangeset, Debug)]
+#[table_name = "locations"]
+struct LocationForm {
+    place:    Option<String>,
+    country:  Option<String>,
+    city:     Option<String>,
+    distance: Option<i64>
+}
+
+#[post("/<id>", format = "application/json", data = "<params>")]
+fn update(conn: DbConn, id: i64, params: LenientForm<LocationForm>) -> Result<Json<()>, ApiError> {
+    let update_data = params.get();
+    diesel::update(locations::table.find(id)).set(update_data).execute(&*conn)?;
+    Ok(Json(()))
 }
 
 #[get("/<id>/avg", format = "application/json")]
