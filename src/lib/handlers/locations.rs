@@ -1,7 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use diesel;
 use diesel::prelude::*;
-use rocket::request::LenientForm;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
@@ -28,7 +27,7 @@ fn show(conn: DbConn, id: i64) -> Result<Json<Location>, ApiError> {
     Ok(Json(location))
 }
 
-#[derive(FromForm, AsChangeset, Debug)]
+#[derive(Deserialize, AsChangeset, Debug)]
 #[table_name = "locations"]
 struct LocationForm {
     place:    Option<String>,
@@ -38,8 +37,8 @@ struct LocationForm {
 }
 
 #[post("/<id>", format = "application/json", data = "<params>")]
-fn update(conn: DbConn, id: i64, params: LenientForm<LocationForm>) -> Result<Json<()>, ApiError> {
-    let update_data = params.get();
+fn update(conn: DbConn, id: i64, params: Json<LocationForm>) -> Result<Json<()>, ApiError> {
+    let update_data = params.into_inner();
     diesel::update(locations::table.find(id)).set(update_data).execute(&*conn)?;
     Ok(Json(()))
 }

@@ -1,7 +1,6 @@
 use std::vec::Vec;
 use diesel;
 use diesel::prelude::*;
-use rocket::request::LenientForm;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
@@ -15,7 +14,7 @@ fn show(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
 }
 
 
-#[derive(FromForm, AsChangeset, Debug)]
+#[derive(Deserialize, AsChangeset, Debug)]
 #[table_name="users"]
 struct UserForm {
     email:      Option<String>,
@@ -26,8 +25,8 @@ struct UserForm {
 }
 
 #[post("/<id>", format = "application/json", data = "<params>")]
-fn update(conn: DbConn, id: i64, params: LenientForm<UserForm>) -> Result<Json<()>, ApiError> {
-    let update_data = params.get();
+fn update(conn: DbConn, id: i64, params: Json<UserForm>) -> Result<Json<()>, ApiError> {
+    let update_data = params.into_inner();
     diesel::update(users::table.find(id)).set(update_data).execute(&*conn)?;
     Ok(Json(()))
 }
