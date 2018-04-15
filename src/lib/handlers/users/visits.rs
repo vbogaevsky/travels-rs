@@ -1,35 +1,9 @@
 use std::vec::Vec;
-use diesel;
 use diesel::prelude::*;
 use rocket_contrib::{Json};
 use lib::db_conn::DbConn;
 use lib::error::Error as ApiError;
-use lib::models::{User};
 use lib::schema::{users, visits, locations};
-
-#[get("/<id>", format = "application/json")]
-fn show(conn: DbConn, id: i64) -> Result<Json<User>, ApiError> {
-    let user = users::table.find(id).first::<User>(&*conn)?;
-    Ok(Json(user))
-}
-
-
-#[derive(Deserialize, AsChangeset, Debug)]
-#[table_name="users"]
-struct UserForm {
-    email:      Option<String>,
-    first_name: Option<String>,
-    last_name:  Option<String>,
-    gender:     Option<String>,
-    birth_date: Option<i64>
-}
-
-#[post("/<id>", format = "application/json", data = "<params>")]
-fn update(conn: DbConn, id: i64, params: Json<UserForm>) -> Result<Json<()>, ApiError> {
-    let update_data = params.into_inner();
-    diesel::update(users::table.find(id)).set(update_data).execute(&*conn)?;
-    Ok(Json(()))
-}
 
 #[derive(FromForm, Debug)]
 struct VisitParams {
@@ -74,5 +48,3 @@ fn queriable_visits(conn: DbConn, id: i64, params: VisitParams) -> Result<Json<V
     let visits = query.order(visits::visited_at.asc()).load(&*conn)?;
     Ok(Json(visits))
 }
-
-// diesel::sql_types::BigInt

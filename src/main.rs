@@ -49,22 +49,22 @@ fn main() {
             ]
         ).mount(
             "/users",     routes![
-                lib::handlers::users::show,
-                lib::handlers::users::update,
-                lib::handlers::users::visits,
-                lib::handlers::users::queriable_visits
+                lib::handlers::users::show::show,
+                lib::handlers::users::update::update,
+                lib::handlers::users::visits::visits,
+                lib::handlers::users::visits::queriable_visits
             ]
         ).mount(
             "/locations", routes![
-                lib::handlers::locations::show,
-                lib::handlers::locations::update,
-                lib::handlers::locations::avg,
-                lib::handlers::locations::queriable_avg
+                lib::handlers::locations::show::show,
+                lib::handlers::locations::update::update,
+                lib::handlers::locations::avg::avg,
+                lib::handlers::locations::avg::queriable_avg
             ]
         ).mount(
             "/visits",    routes![
-                lib::handlers::visits::show,
-                lib::handlers::visits::update
+                lib::handlers::visits::show::show,
+                lib::handlers::visits::update::update
             ]
         ).launch();
 }
