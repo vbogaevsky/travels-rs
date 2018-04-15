@@ -57,6 +57,7 @@ fn main() {
         ).mount(
             "/locations", routes![
                 lib::handlers::locations::show::show,
+                lib::handlers::locations::create::create,
                 lib::handlers::locations::update::update,
                 lib::handlers::locations::avg::avg,
                 lib::handlers::locations::avg::queriable_avg
