@@ -50,6 +50,7 @@ fn main() {
         ).mount(
             "/users",     routes![
                 lib::handlers::users::show::show,
+                lib::handlers::users::create::create,
                 lib::handlers::users::update::update,
                 lib::handlers::users::visits::visits,
                 lib::handlers::users::visits::queriable_visits
@@ -65,6 +66,7 @@ fn main() {
         ).mount(
             "/visits",    routes![
                 lib::handlers::visits::show::show,
+                lib::handlers::visits::create::create,
                 lib::handlers::visits::update::update
             ]
         ).launch();
